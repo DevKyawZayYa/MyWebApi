@@ -10,7 +10,6 @@ WORKDIR /src
 
 # Copy the solution and project files
 # Restore dependencies
-RUN dotnet restore "MyWebApi/MyWebApi.csproj"
 
 # Copy the remaining source code
 COPY . .
