@@ -14,7 +14,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: Log in to Amazon ECR
+      # Step 2: List files to verify the Dockerfile is available
+      - name: Debug: List files
+        run: ls -R
+
+      # Step 3: Log in to Amazon ECR
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
@@ -23,20 +27,22 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
 
-      # Step 3: Build and push Docker image to Amazon ECR
+      # Step 4: Build and push Docker image to Amazon ECR
       - name: Build, Tag, and Push Docker Image
         env:
           AWS_REGION: ${{ secrets.AWS_REGION }}
           AWS_ECR_URI: ${{ secrets.AWS_ECR_URI }}
         run: |
-          docker build -t $AWS_ECR_URI:latest .
+          docker build -t $AWS_ECR_URI:latest -f Dockerfile .
           docker push $AWS_ECR_URI:latest
 
-      # Step 4: Deploy to Amazon ECS
+      # Step 5: Deploy to Amazon ECS
       - name: Deploy to Amazon ECS
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          aws ecs update-service --cluster my-cl
+          aws ecs update-service --cluster my-cluster \
+            --service my-service \
+            --force-new-deployment
