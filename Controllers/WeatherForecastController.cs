@@ -10,7 +10,7 @@ namespace MyWebApi.Controllers
         [HttpGet("test")]
         public IActionResult GetTest()
         {
-            var common = new Class1();
+            var common = new Class1();  
             return Ok(common.GetMessage());
         }
     }
