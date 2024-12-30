@@ -1,0 +1,39 @@
+﻿version: '3.8'
+
+services:
+  # MySQL Service
+  mysql:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345 # Setting root password explicitly
+      MYSQL_DATABASE: EcommerenceDb
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - app-network
+
+  # Web API Service
+  mywebapi:
+    build:
+      context: .
+      dockerfile: MyWebApi/Dockerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      # Use 'mysql' as the host to connect to the MySQL service in Docker
+      ConnectionStrings__DefaultConnection: Server=mywebapi-db.c1gism2kitk0.ap-southeast-1.rds.amazonaws.com;Database=ecommerencedb;User Id=admin;Password=Kzy09970425320;
+    networks:
+      - app-network
+
+volumes:
+  mysql-data:
+
+networks:
+  app-network:
+    driver: bridge
