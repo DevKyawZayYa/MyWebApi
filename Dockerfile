@@ -9,8 +9,6 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 # Copy the solution and project files
-COPY ["MyWebApi/MyWebApi.csproj", "MyWebApi/"]
-
 # Restore dependencies
 RUN dotnet restore "MyWebApi/MyWebApi.csproj"
 
